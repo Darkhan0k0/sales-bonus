@@ -92,27 +92,24 @@ function analyzeSalesData(data, options) {
         });
     // @TODO: Расчет выручки и прибыли для каждого продавца
     data.purchase_records.forEach(record => {
-         const seller = sellerIndex[record.seller_id];
+        const seller = sellerIndex[record.seller_id];
+        if (!seller) return;
 
-        if (seller){
-            seller.sales_count += 1;
-            seller.revenue += record.total_amount - record.total_discount;
-        }
-        if (!seller) {
-            return;
-        }
+        seller.sales_count += 1;
 
         record.items.forEach(item => {
             const product = productIndex[item.sku];
-            const cost = product.purchase_price * item.quantity;
+            if (!product) return;
+
             const revenue = calculateRevenue(item, product);
+            const cost = product.purchase_price * item.quantity;
             const profit = revenue - cost;
+
+            seller.revenue += revenue;
             seller.profit += profit;
 
-            if (!seller.products_sold[item.sku]) {
-                seller.products_sold[item.sku] = 0;
-            }
-            seller.products_sold[item.sku] += item.quantity;
+            seller.products_sold[item.sku] =
+                (seller.products_sold[item.sku] || 0) + item.quantity;
         });
     });
 
@@ -131,7 +128,7 @@ function analyzeSalesData(data, options) {
     // @TODO: Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => ({
             seller_id: seller.sellerId,
-            name: `${seller.firstName} ${seller.lastName}`,
+            name: `${seller.first_name} ${seller.last_name}`,
             revenue: +seller.revenue.toFixed(2),
             profit: +seller.profit.toFixed(2),
             sales_count: seller.sales_count,

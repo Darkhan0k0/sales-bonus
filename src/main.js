@@ -94,6 +94,8 @@ function analyzeSalesData(data, options) {
             seller.revenue += record.total_amount - record.total_discount;
         }
 
+        if (!seller) return;
+
         record.items.forEach(item => {
             const product = productIndex[item.sku];
             const cost = product.purchase_price * item.quantity;

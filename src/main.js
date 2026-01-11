@@ -81,9 +81,19 @@ function analyzeSalesData(data, options) {
     }));
 
     // @TODO: Индексация продавцов и товаров для быстрого доступа
-    const sellerIndex = Object.fromEntries(sellerStats.map(s => [s.id, s]));
+    const sellerIndex = sellerStats.reduce((acc, sellers) => {
+        return {
+            ...acc,
+            [sellers.id]: sellers
+        }
+    }, {});
 
-    const productIndex = Object.fromEntries(data.products.map(prod => [prod.sku, prod]));
+    const productIndex = data.products.reduce((acc, productInf) => {
+        return {
+            ...acc,
+            [productInf.sku] : productInf
+        }
+    }, {});
 
     // @TODO: Расчет выручки и прибыли для каждого продавца
     data.purchase_records.forEach(record => {

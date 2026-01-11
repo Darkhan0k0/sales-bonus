@@ -70,20 +70,21 @@ function analyzeSalesData(data, options) {
 
     // @TODO: Подготовка промежуточных данных для сбора статистики
     const sellerStats = data.sellers.map(seller => ({
-        seller_id: seller.id,
-        name: `${seller.first_name} ${seller.last_name}`,
+        sellerId: seller.id,
+        firstName: seller.first_name,
+        lastName: seller.last_name,
         revenue: 0,
-        bonus: 0,
-        sales_count: 0,
         profit: 0,
-        top_products: [],
-        products_sold: {}
+        sales_count: 0,
+        products_sold: {},
+        bonus: 0,
+        top_products: []
     }));
 
     // @TODO: Индексация продавцов и товаров для быстрого доступа
     const sellerIndex = {};
         sellerStats.forEach(seller => {
-            sellerIndex[seller.seller_id] = seller;
+            sellerIndex[seller.sellerId] = seller;
         });
 
     const productIndex = {};
@@ -127,12 +128,12 @@ function analyzeSalesData(data, options) {
 
     // @TODO: Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => ({
-            seller_id: seller.seller_id,
-            name: `${seller.first_name} ${seller.last_name}`,
-            revenue: +seller.revenue.toFixed(2),
-            profit: +seller.profit.toFixed(2),
-            sales_count: seller.sales_count,
-            top_products: seller.top_products,
-            bonus: +seller.bonus.toFixed(2),
+        seller_id: seller.sellerId,
+        name: `${seller.firstName} ${seller.lastName}`,
+        revenue: +seller.revenue.toFixed(2),
+        profit: +seller.profit.toFixed(2),
+        sales_count: seller.sales_count,
+        top_products: seller.top_products,
+        bonus: +seller.bonus.toFixed(2),
     }));
 }

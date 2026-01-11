@@ -81,19 +81,9 @@ function analyzeSalesData(data, options) {
     }));
 
     // @TODO: Индексация продавцов и товаров для быстрого доступа
-    const sellerIndex = sellerStats.reduce((acc, sellers) => {
-        return {
-            ...acc,
-            [sellers.id]: sellers
-        }
-    }, {});
+    const sellerIndex = Object.fromEntries(sellerStats.map(sellers => [sellers.id, sellers]));
 
-    const productIndex = data.products.reduce((acc, productInf) => {
-        return {
-            ...acc,
-            [productInf.sku] : productInf
-        }
-    }, {});
+    const productIndex = Object.fromEntries(data.products.map(prod => [prod.sku, prod]));
 
     // @TODO: Расчет выручки и прибыли для каждого продавца
     data.purchase_records.forEach(record => {
@@ -103,8 +93,10 @@ function analyzeSalesData(data, options) {
             seller.sales_count += 1;
             seller.revenue += record.total_amount - record.total_discount;
         }
-        else throw new Error('Нет поля "Продавец"');
-
+        if (!seller) {
+            return;
+        }
+        
         record.items.forEach(item => {
             const product = productIndex[item.sku];
             const cost = product.purchase_price * item.quantity;

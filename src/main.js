@@ -81,7 +81,7 @@ function analyzeSalesData(data, options) {
     }));
 
     // @TODO: Индексация продавцов и товаров для быстрого доступа
-    const sellerIndex = Object.fromEntries(sellerStats.map(seller => [seller.sellerId, seller]));
+    const sellerIndex = Object.fromEntries(sellerStats.map(seller => [seller.seller_id, seller]));
 
     const productIndex = Object.fromEntries(data.products.map(prod => [prod.sku, prod]));
 
